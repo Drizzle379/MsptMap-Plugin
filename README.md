@@ -17,11 +17,11 @@ jar 同时承担两种角色：放入 `plugins/` 是 Bukkit 插件，以 `-javaa
 
 ## 部署
 
-1. 将 `MsptMap-Plugin-1.0.1+26.x.jar` 放入 `plugins/`。
+1. 将 `MsptMap-Plugin-1.0.1-alpha+26.x.jar` 放入 `plugins/`。
 2. 在启动命令的 `-jar` 之前加入 `-javaagent`：
 
    ```bash
-   java -Xms4G -Xmx4G -javaagent:plugins/MsptMap-Plugin-1.0.1+26.x.jar -jar paper.jar nogui
+   java -Xms4G -Xmx4G -javaagent:plugins/MsptMap-Plugin-1.0.1-alpha+26.x.jar -jar paper.jar nogui
    ```
 
 3. 启动后日志出现以下两行即为正常：
@@ -79,7 +79,7 @@ monitor:
 ./gradlew :plugin:jar
 ```
 
-Windows 使用 `gradlew.bat :plugin:jar`。产物位于 `plugin/build/libs/MsptMap-Plugin-1.0.1+26.x.jar`。
+Windows 使用 `gradlew.bat :plugin:jar`。产物位于 `plugin/build/libs/MsptMap-Plugin-1.0.1-alpha+26.x.jar`。
 
 ## 已知限制
 

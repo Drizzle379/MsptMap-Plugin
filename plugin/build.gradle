@@ -10,7 +10,7 @@ dependencies {
 
 jar {
 	dependsOn ':agent:shadowJar'
-	archiveFileName = "MsptMap-Plugin-${project.version}+26.x.jar"
+	archiveFileName = "MsptMap-Plugin-${project.version}-alpha+26.x.jar"
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 	from(zipTree(project(':agent').tasks.named('shadowJar').flatMap { it.archiveFile }.map { it.asFile })) {
