@@ -18,7 +18,7 @@ jar 同时承担两种角色：放入 `plugins/` 是 Bukkit 插件，以 `-javaa
 ## 部署
 
 1. 将 `MsptMap-Plugin-1.0.1-alpha+26.x.jar` 放入 `plugins/`。
-2. 在启动命令的 `-jar` 之前加入 `-javaagent`：
+2. ⚠️ **重要**：在启动命令的 `-jar` 之前加入 `-javaagent`：
 
    ```bash
    java -Xms4G -Xmx4G -javaagent:plugins/MsptMap-Plugin-1.0.1-alpha+26.x.jar -jar paper.jar nogui
