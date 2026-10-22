@@ -1,0 +1,30 @@
+plugins {
+	id 'java'
+}
+
+dependencies {
+	compileOnly "io.papermc.paper:paper-api:${paper_version}"
+	// 聊天行使用 Bungee Chat 组件（Paper / Spigot 均自带）
+	compileOnly 'net.md-5:bungeecord-chat:1.21-R0.2-deprecated+build.21'
+}
+
+jar {
+	dependsOn ':agent:shadowJar'
+	archiveBaseName = 'MsptMap-Plugin'
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	from(zipTree(project(':agent').tasks.named('shadowJar').flatMap { it.archiveFile }.map { it.asFile })) {
+		exclude 'META-INF/MANIFEST.MF'
+		exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+		exclude 'module-info.class'
+	}
+
+	manifest {
+		attributes(
+				'Premain-Class': 'msptmap.agent.Agent',
+				'Can-Retransform-Classes': 'true',
+				'Implementation-Title': 'MsptMap-Plugin',
+				'Implementation-Version': project.version
+		)
+	}
+}

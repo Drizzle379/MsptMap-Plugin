@@ -1,0 +1,21 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'PaperMC'
+			url = 'https://repo.papermc.io/repository/maven-public/'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
+	// paperweight 2.x 未发布插件标记，按模块坐标解析
+	resolutionStrategy {
+		eachPlugin {
+			if (requested.id.id == 'io.papermc.paperweight.userdev') {
+				useModule("io.papermc.paperweight:paperweight-userdev:${requested.version}")
+			}
+		}
+	}
+}
+
+rootProject.name = 'MsptMap-Plugin'
+include 'agent', 'plugin'

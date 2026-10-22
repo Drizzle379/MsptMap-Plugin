@@ -1,0 +1,7 @@
+.gradle/
+build/
+agent/build/
+plugin/build/
+.idea/
+*.iml
+PLAN.md
