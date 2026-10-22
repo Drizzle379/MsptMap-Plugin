@@ -1,5 +1,6 @@
 package msptmap.agent;
 
+import ca.spottedleaf.moonrise.patches.chunk_system.level.entity.server.ServerEntityLookup;
 import ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
@@ -14,6 +15,7 @@ import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -203,6 +205,22 @@ public final class TicketSources {
 	}
 
 	/**
+	 * Paper 的末影珍珠票：未注册进 {@code BuiltInRegistries.TICKET_TYPE}，且字段为私有，只能反射读取。
+	 * 字段名随 Paper 版本变化时解析为 null，该票退化为 {@link TicketCode#UNRECOGNIZED}。
+	 */
+	private static final TicketType ENDER_PEARL_TICKER = enderPearlTicker();
+
+	private static TicketType enderPearlTicker() {
+		try {
+			Field field = ServerEntityLookup.class.getDeclaredField("ENDER_PEARL_TICKER");
+			field.setAccessible(true);
+			return (TicketType) field.get(null);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
 	 * 票类型身份 → 协议序号的缓存。
 	 */
 	private static final Map<TicketType, Integer> TYPE_CACHE = new IdentityHashMap<>();
@@ -220,14 +238,16 @@ public final class TicketSources {
 	/**
 	 * 票类型 → 协议序号。识别依据为注册表中的名字，而非 {@code equals}。
 	 *
-	 * <p>Paper 的 Moonrise 用两张私有票加载玩家视距内的区块：它们不进
-	 * {@code BuiltInRegistries.TICKET_TYPE}，按名字查不到，且逐区块铺设、同时参与加载链与模拟链，
-	 * 语义等同原版的 {@code player_loading}。
+	 * <p>Paper 的 Moonrise 另有几张私有票，不进 {@code BuiltInRegistries.TICKET_TYPE}，按名字查不到：
+	 * 玩家票（两张）逐区块铺设，语义等同 {@code player_loading}；末影珍珠票语义等同 {@code ender_pearl}。
 	 */
 	private static int computeIndexOf(TicketType type) {
 		if (type == RegionizedPlayerChunkLoader.PLAYER_TICKET
 				|| type == RegionizedPlayerChunkLoader.PLAYER_TICKET_DELAYED) {
 			return TicketCode.PLAYER_LOADING;
+		}
+		if (type == ENDER_PEARL_TICKER) {
+			return TicketCode.ENDER_PEARL;
 		}
 		String path = Ids.path(BuiltInRegistries.TICKET_TYPE, type);
 		if (path == null) {
