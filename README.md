@@ -1,6 +1,6 @@
 # MsptMap-Plugin
 
-为 Paper 服务端提供 MsptMap 的采样与发包能力。安装 `msptmap-fabric` 1.0.1 的客户端连接后，可在 Xaero 世界地图上查看逐区块 MSPT 热力图。
+为 Paper 服务端提供 [MsptMap](https://github.com/Drizzle379/MsptMap) 的采样与发包能力。安装 `msptmap-fabric` 1.0.1 的客户端连接后，可在 Xaero 世界地图上查看逐区块 MSPT 热力图。
 
 当前为 alpha 测试版，插件与客户端模组需配套使用（协议 `0x4D535034`）。
 
