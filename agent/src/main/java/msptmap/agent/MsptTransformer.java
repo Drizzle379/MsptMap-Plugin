@@ -25,7 +25,7 @@ import java.util.Set;
  * <p>每个方法只加一个 long 局部变量保存开始时刻，不加字段、不改原有指令；未采样时开始时刻为 0，
  * 收尾调用随即返回。方块更新各入口共用嵌套层数，最外层才记账，并用 try-catch 保证异常路径也能还原。
  *
- * <p>目标类名与方法签名按 Paper 26.2（Mojang 映射）书写，版本升级后若签名变动，注入会跳过该方法
+ * <p>目标类名与方法签名按 Paper 26.x（Mojang 映射）书写，版本升级后若签名变动，注入会跳过该方法
  * 并在启动日志中留痕，不影响服务器运行。
  */
 public final class MsptTransformer implements ClassFileTransformer {
