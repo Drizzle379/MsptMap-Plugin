@@ -61,11 +61,13 @@ final class Alert {
 		for (int i = 0; i < totals.length; i++) {
 			lines.add(row(dimensions[i], chunkXs[i], chunkZs[i], totals[i], windowTicks));
 		}
-		BaseComponent[] message = lines.toArray(new BaseComponent[0]);
 		for (UUID id : audience) {
 			Player player = Bukkit.getPlayer(id);
 			if (player != null && player.isOnline()) {
-				player.spigot().sendMessage(message);
+				// 每个组件单独发送，否则聊天栏会把整份列表拼成一行
+				for (BaseComponent line : lines) {
+					player.spigot().sendMessage(line);
+				}
 			}
 		}
 	}
