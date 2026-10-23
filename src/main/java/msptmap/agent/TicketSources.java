@@ -67,9 +67,8 @@ public final class TicketSources {
 		int[] queueAnchorXs = new int[capacity];
 		int[] queueAnchorZs = new int[capacity];
 		int queueHead = 0;
-		int queueTail = 0;
 
-		// 一、持票区块：持有本链的票，且等级落在快照范围内
+		// 一、持票区块：先收集全量，出生点票需按整组归并
 		int anchors = 0;
 		for (LongIterator it = keys.iterator(); it.hasNext(); ) {
 			long key = it.nextLong();
@@ -77,18 +76,49 @@ public final class TicketSources {
 			if (anchor == null || !ChunkLevel.isBlockTicking(anchor[1])) {
 				continue;
 			}
-			int x = ChunkPos.getX(key);
-			int z = ChunkPos.getZ(key);
-			sources.put(key, TicketCode.encode(anchor[0], 0, 0, false));
-			queueKeys[queueTail] = key;
-			queueSpread[queueTail] = anchor[1];
-			queueAnchorXs[queueTail] = x;
-			queueAnchorZs[queueTail] = z;
-			queueTail++;
+			queueKeys[anchors] = key;
+			queueSpread[anchors] = anchor[1];
+			queueAnchorXs[anchors] = anchor[0]; // 暂存票类型，三、改写为源头坐标
 			anchors++;
 		}
 
-		// 二、按 8 邻扩散，只往实际等级恰好等于本票传播值的邻居走
+		// 二、出生点票归并：Paper 把出生点票逐区块铺在 (2r+1)² 个区块上，原版只在中心放一张带半径的票。
+		// 取这组票的包围盒中心作为唯一中心，成员票改记为被中心票覆盖，客户端只画一个蓝框。
+		int spawnMinX = Integer.MAX_VALUE;
+		int spawnMaxX = Integer.MIN_VALUE;
+		int spawnMinZ = Integer.MAX_VALUE;
+		int spawnMaxZ = Integer.MIN_VALUE;
+		for (int i = 0; i < anchors; i++) {
+			if (queueAnchorXs[i] != TicketCode.PLAYER_SPAWN) {
+				continue;
+			}
+			int x = ChunkPos.getX(queueKeys[i]);
+			int z = ChunkPos.getZ(queueKeys[i]);
+			spawnMinX = Math.min(spawnMinX, x);
+			spawnMaxX = Math.max(spawnMaxX, x);
+			spawnMinZ = Math.min(spawnMinZ, z);
+			spawnMaxZ = Math.max(spawnMaxZ, z);
+		}
+		boolean hasSpawn = spawnMaxX != Integer.MIN_VALUE;
+		int spawnCenterX = hasSpawn ? (spawnMinX + spawnMaxX) / 2 : 0;
+		int spawnCenterZ = hasSpawn ? (spawnMinZ + spawnMaxZ) / 2 : 0;
+
+		// 三、写入源头，作为扩散起点
+		int queueTail = anchors;
+		for (int i = 0; i < anchors; i++) {
+			long key = queueKeys[i];
+			int type = queueAnchorXs[i];
+			int x = ChunkPos.getX(key);
+			int z = ChunkPos.getZ(key);
+			boolean spawn = type == TicketCode.PLAYER_SPAWN;
+			int anchorX = spawn ? spawnCenterX : x;
+			int anchorZ = spawn ? spawnCenterZ : z;
+			sources.put(key, TicketCode.encode(type, anchorX - x, anchorZ - z, false));
+			queueAnchorXs[i] = anchorX;
+			queueAnchorZs[i] = anchorZ;
+		}
+
+		// 四、按 8 邻扩散，只往实际等级恰好等于本票传播值的邻居走
 		while (queueHead < queueTail) {
 			long key = queueKeys[queueHead];
 			int spread = queueSpread[queueHead];
