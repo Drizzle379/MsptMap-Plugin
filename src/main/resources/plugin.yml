@@ -1,7 +1,7 @@
 name: MsptMap
-version: '1.0.1'
+version: '${version}'
 main: msptmap.plugin.MsptMapPlugin
-api-version: '26.1'
+api-version: '${apiVersion}'
 description: Per-chunk MSPT heat map for clients running the msptmap-fabric mod
 commands:
   msptmap:

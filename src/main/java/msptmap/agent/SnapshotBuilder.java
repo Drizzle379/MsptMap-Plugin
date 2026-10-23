@@ -95,7 +95,7 @@ public final class SnapshotBuilder {
 	private static LongOpenHashSet holderKeys(List<NewChunkHolder> holders) {
 		LongOpenHashSet keys = new LongOpenHashSet(Math.max(16, holders.size()));
 		for (NewChunkHolder holder : holders) {
-			keys.add(ChunkPos.pack(holder.chunkX, holder.chunkZ));
+			keys.add(ChunkKeys.pack(holder.chunkX, holder.chunkZ));
 		}
 		return keys;
 	}
@@ -149,7 +149,7 @@ public final class SnapshotBuilder {
 		int used = 0;
 		boolean full = false;
 		for (NewChunkHolder holder : holders) {
-			long key = ChunkPos.pack(holder.chunkX, holder.chunkZ);
+			long key = ChunkKeys.pack(holder.chunkX, holder.chunkZ);
 			if (measured.contains(key) || included.contains(key)) {
 				continue;
 			}

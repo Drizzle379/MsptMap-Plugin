@@ -3,7 +3,11 @@ package msptmap.agent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;
+*///?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -72,8 +76,13 @@ public final class Nms {
 		if (player == null || player.connection == null) {
 			return;
 		}
+//? if >=1.21.11 {
 		player.connection.send(new ClientboundCustomPayloadPacket(
 				new DiscardedPayload(Identifier.parse("minecraft:register"), payload)));
+//?} else {
+/*		player.connection.send(new ClientboundCustomPayloadPacket(
+				new DiscardedPayload(ResourceLocation.parse("minecraft:register"), payload)));
+*///?}
 	}
 
 	/**
