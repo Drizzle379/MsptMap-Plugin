@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * 注入代码共用同一份静态状态。跨加载器传递的参数与返回值只用 JDK 类型。
  */
 final class BridgeAccess {
-	/** 扫描开始结果码，与 agent 侧 Bridge 一致。 */
+	/** 扫描开始结果码，与 agent 侧 MsptSampler.StartResult 的 ordinal 一致。 */
 	static final int STARTED = 0;
 	static final int BUSY = 1;
 	static final int COOLDOWN = 2;
@@ -23,6 +23,9 @@ final class BridgeAccess {
 
 	/** 请求未指定秒数时的默认值。 */
 	static final int DEFAULT_SECONDS = 2;
+
+	/** 扫描冷却秒数，与 agent 侧 MsptSampler.COOLDOWN_SECONDS 保持一致。 */
+	static final int COOLDOWN_SECONDS = 2;
 
 	private static final String CLASS_NAME = "msptmap.agent.Bridge";
 

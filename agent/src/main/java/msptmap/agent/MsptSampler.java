@@ -90,9 +90,13 @@ public final class MsptSampler {
 
 	/** 一次「开始」请求的结果。 */
 	public enum StartResult {
+		/** 窗口已开。 */
 		STARTED,
+		/** 已有扫描进行中。 */
 		BUSY,
+		/** 距上次扫描结束不足 {@link #COOLDOWN_SECONDS} 秒。 */
 		COOLDOWN,
+		/** 服务端当前未运行（见 {@link #stalled}）：窗口数不到刻，控制台请求直接拒绝。 */
 		STALLED
 	}
 
@@ -346,7 +350,7 @@ public final class MsptSampler {
 	public record Heavy(String dimension, int chunkX, int chunkZ, long totalNanos) {
 	}
 
-	/** 结果无法发回客户端时，将最重的 5 个区块输出到服务端控制台。 */
+	/** 结果无法发回客户端时，将最重的若干区块输出到服务端控制台。 */
 	private static void logTopChunks() {
 		List<Row> rows = sortedRows();
 		Log.info("扫描结束：{0} 个维度 / {1} 个区块，窗口 {2} 秒 / {3} tick",
@@ -354,7 +358,7 @@ public final class MsptSampler {
 
 		int printed = 0;
 		for (Row row : rows) {
-			if (printed >= 5) {
+			if (printed >= ALERT_ROWS) {
 				break;
 			}
 			if (row.total <= 0L) {

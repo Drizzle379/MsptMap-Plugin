@@ -17,14 +17,6 @@ import java.util.function.Supplier;
  * <p>插件启动时通过 setter 挂上发包、告警、受众与 tick 回调；未挂时对应功能静默跳过。
  */
 public final class Bridge {
-	public static final int STARTED = 0;
-	public static final int BUSY = 1;
-	public static final int COOLDOWN = 2;
-	public static final int STALLED = 3;
-
-	/** 未指定秒数时的默认值。 */
-	public static final int DEFAULT_SECONDS = MsptSampler.DEFAULT_SECONDS;
-
 	/** 是否已安装注入器（由 agent 启动时写入的系统属性）。 */
 	public static final String INSTALLED_PROPERTY = "msptmap.agent.installed";
 
@@ -95,7 +87,7 @@ public final class Bridge {
 	}
 
 	/**
-	 * 插件侧：开始一次扫描，返回 {@link #STARTED} 等结果码。
+	 * 插件侧：开始一次扫描，返回结果码（0~3，顺序与 {@link MsptSampler.StartResult} 一致）。
 	 *
 	 * <p>状态包由本方法直接回给发起人：START 里的秒数以服务端夹取后的值为准。
 	 */

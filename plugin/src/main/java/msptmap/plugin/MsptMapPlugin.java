@@ -27,6 +27,9 @@ public final class MsptMapPlugin extends JavaPlugin implements Listener {
 	/** 服务端回发扫描结果。 */
 	static final String SCAN_RESULT = "msptmap:scan_result";
 
+	/** 协议魔数，与 agent 侧 Wire 及客户端一致。 */
+	static final int PROTOCOL = 0x4D535034;
+
 	/** 需要向客户端声明的可接收通道。 */
 	private static final String[] ADVERTISED_CHANNELS = {SCAN_REQUEST, COMMAND_RELAY};
 

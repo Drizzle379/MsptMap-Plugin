@@ -7,8 +7,8 @@ import java.util.Arrays;
  * Paperclip 类路径钩子：由注入器在 {@code Paperclip.setupClasspath} 返回前调用。
  *
  * <p>Paper 26.2 起，随服务端发布的 Paperclip 已不再读取 {@code paperclip.extraClasspathUrls}，
- * 但注入器必须先于 Paperclip 运行，无法在它创建类加载器后再追加 URL。因此在返回值里补上本 jar，
- * 使服务端类加载器同时加载本包。钩子自身只依赖 JDK，能由系统类加载器安全加载。
+ * 但注入器必须先于 Paperclip 运行，无法在它创建类加载器后再追加 URL。因此在返回值里补上注入器
+ * 运行时类路径，使服务端类加载器同时加载本包。钩子自身只依赖 JDK，能由系统类加载器安全加载。
  */
 public final class PaperclipHook {
 	private PaperclipHook() {

@@ -13,7 +13,6 @@ java {
 dependencies {
 	paperweight.paperDevBundle("${paper_version}")
 	implementation "org.ow2.asm:asm:${asm_version}"
-	implementation "org.ow2.asm:asm-tree:${asm_version}"
 }
 
 // 26.x 的服务端本身不再混淆，产出保持 Mojang 名即可

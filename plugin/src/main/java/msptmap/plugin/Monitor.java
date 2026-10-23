@@ -1,7 +1,5 @@
 package msptmap.plugin;
 
-import java.util.Locale;
-
 /**
  * 常态 MSPT 监控：agent 每 tick 报一次整 tick 执行耗时，平滑后持续超标即触发一次自动扫描。
  *
@@ -134,6 +132,7 @@ final class Monitor {
 		return consecutiveChecks > 0 ? State.WATCHING : State.OK;
 	}
 
+	/** 已连续超标的次数（去抖进度）。 */
 	int consecutiveChecks() {
 		return consecutiveChecks;
 	}
@@ -142,10 +141,5 @@ final class Monitor {
 	long cooldownRemainingSeconds() {
 		long remaining = cooldownUntilNanos - System.nanoTime();
 		return remaining <= 0 ? 0L : (remaining + 999_999_999L) / 1_000_000_000L;
-	}
-
-	/** 状态显示名。 */
-	String stateName() {
-		return state().name().toLowerCase(Locale.ROOT);
 	}
 }

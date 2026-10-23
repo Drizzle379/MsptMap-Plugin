@@ -10,7 +10,6 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
  * <p>权限不在此处判定：{@code dispatchCommand} 使用玩家自身来源，各子命令的权限照常生效。
  */
 final class RelayListener implements PluginMessageListener {
-	private static final int PROTOCOL = 0x4D535034;
 	private static final String PREFIX = "msptmap ";
 
 	private final MsptMapPlugin plugin;
@@ -36,9 +35,9 @@ final class RelayListener implements PluginMessageListener {
 					+ command);
 			return;
 		}
-		if (protocol != PROTOCOL) {
+		if (protocol != MsptMapPlugin.PROTOCOL) {
 			plugin.getLogger().warning("玩家 " + player.getName() + " 的 MsptMap 版本与本端不一致（对面 "
-					+ protocol + "，本端 " + PROTOCOL + "），仍按其请求执行");
+					+ protocol + "，本端 " + MsptMapPlugin.PROTOCOL + "），仍按其请求执行");
 		}
 		Bukkit.dispatchCommand(player, command);
 	}

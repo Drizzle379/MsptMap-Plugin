@@ -21,7 +21,6 @@ final class MsptMapCommand implements CommandExecutor, TabCompleter {
 	private static final int MIN_SECONDS = 1;
 	private static final int MAX_SECONDS = 60;
 
-	private static final List<String> ROOTS = List.of("scan", "access", "monitor");
 	private static final List<String> MONITOR_ITEMS =
 			List.of("on", "off", "threshold", "cooldown", "audience");
 
@@ -86,8 +85,10 @@ final class MsptMapCommand implements CommandExecutor, TabCompleter {
 				plugin.getLogger().info(sender.getName() + " 开始扫描 " + seconds + " 秒");
 			}
 			case BridgeAccess.BUSY -> sender.sendMessage("扫描失败：已有扫描正在进行。");
-			case BridgeAccess.COOLDOWN -> sender.sendMessage("扫描失败：距上次扫描结束不足 2 秒，请稍后再试。");
-			default -> sender.sendMessage("扫描失败：服务端当前没有在运行（空载暂停或长时间卡顿）。");
+			case BridgeAccess.COOLDOWN -> sender.sendMessage(
+					"扫描失败：距上次扫描结束不足 " + BridgeAccess.COOLDOWN_SECONDS + " 秒，请稍后再试。");
+			case BridgeAccess.STALLED -> sender.sendMessage("扫描失败：服务端当前没有在运行（空载暂停或长时间卡顿）。");
+			default -> sender.sendMessage("扫描失败：未知状态。");
 		}
 	}
 
@@ -176,7 +177,7 @@ final class MsptMapCommand implements CommandExecutor, TabCompleter {
 			return;
 		}
 		config.cooldownMinutes = value;
-		saved(sender, "monitor.cooldown", Integer.toString(value));
+		saved(sender, "monitor.cooldown-minutes", Integer.toString(value));
 	}
 
 	private void audience(CommandSender sender, String[] args) {
@@ -249,7 +250,7 @@ final class MsptMapCommand implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 1) {
-			List<String> roots = new ArrayList<>(ROOTS.size());
+			List<String> roots = new ArrayList<>(3);
 			if (plugin.canScan(sender)) {
 				roots.add("scan");
 			}
