@@ -1,8 +1,8 @@
 .gradle/
 build/
-agent/build/
-plugin/build/
+versions/*/build/
 .idea/
 *.iml
 PLAN.md
 MsptMap-Plugin.md
+CLAUDE.md
