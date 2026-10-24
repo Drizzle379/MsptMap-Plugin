@@ -14,17 +14,20 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * Java agent 入口：安装字节码注入器，并把注入器运行时类加入 Paperclip 的类路径。
+ * Java agent 入口：安装字节码注入器，并把注入器运行时类加入服务端的类路径。
  *
- * <p>Paperclip 用一个新的类加载器加载服务端，其父加载器为平台加载器，因此 {@code -javaagent}
- * 的系统类路径对它不可见，注入代码会找不到本包中的类。这里同时走两条路：
+ * <p>Paperclip（Paper 及多数分支）、Leavesclip 与 Leaper（Leaf）都用一个新的类加载器加载服务端，
+ * 其父加载器为平台加载器，因此 {@code -javaagent} 的系统类路径对它不可见，注入代码会找不到本包
+ * 中的类。这里同时走两条路：
  * <ul>
  *   <li>写入 {@code paperclip.extraClasspathUrls}，供仍支持该属性的 Paperclip 版本读取；</li>
- *   <li>由注入器改写 {@code Paperclip.setupClasspath} 的返回值，把运行时类目录追加进返回的 URL 数组，</li>
+ *   <li>由注入器改写引导器的 {@code setupClasspath} 返回值，把运行时类目录追加进返回的 URL
+ *       数组，</li>
  * </ul>
- * 后者覆盖已移除该属性的较新版本。追加的是从本 jar 解出的 {@code msptmap/agent} 目录而不是 jar 本身：
- * 若把整只 jar 暴露给服务端类加载器，插件主类会被它抢先加载，Bukkit 将拒绝创建插件实例。
- * 插件侧再经服务端类加载器访问 {@link Bridge}，即可与注入代码共享同一份静态状态。
+ * 后者覆盖已移除该属性的版本，也覆盖不读该属性的 Leavesclip 与 Leaper。追加的是从本 jar 解出的
+ * {@code msptmap/agent} 目录而不是 jar 本身：若把整只 jar 暴露给服务端类加载器，插件主类会被它
+ * 抢先加载，Bukkit 将拒绝创建插件实例。插件侧再经服务端类加载器访问 {@link Bridge}，即可与注入
+ * 代码共享同一份静态状态。
  */
 public final class Agent {
 	/** Paperclip 读取的额外类路径属性；多个路径以系统路径分隔符连接。 */

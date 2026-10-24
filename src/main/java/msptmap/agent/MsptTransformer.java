@@ -25,7 +25,7 @@ import java.util.Set;
  * <p>每个方法只加一个 long 局部变量保存开始时刻，不加字段、不改原有指令；未采样时开始时刻为 0，
  * 收尾调用随即返回。方块更新各入口共用嵌套层数，最外层才记账，并用 try-catch 保证异常路径也能还原。
  *
- * <p>目标类名与方法签名按 Paper 26.x（Mojang 映射）书写。版本升级后若签名变动，对应方法会被跳过；
+ * <p>目标类名与方法签名按 Paper 系（Mojang 映射）书写。版本升级后若签名变动，对应方法会被跳过；
  * 改写过程抛异常时按类记录日志并放行原类，不影响服务器运行。
  */
 public final class MsptTransformer implements ClassFileTransformer {
@@ -40,7 +40,9 @@ public final class MsptTransformer implements ClassFileTransformer {
 	private static final String NATURAL_SPAWNER = "net/minecraft/world/level/NaturalSpawner";
 	private static final String MINECRAFT_SERVER = "net/minecraft/server/MinecraftServer";
 	private static final String PAPERCLIP = "io/papermc/paperclip/Paperclip";
-	private static final String PAPERCLIP_HOOK = "msptmap/agent/PaperclipHook";
+	private static final String LEAVESCLIP = "org/leavesmc/leavesclip/Leavesclip";
+	private static final String LEAPER = "cn/dreeam/leaper/QuantumLeaper";
+	private static final String CLIP_HOOK = "msptmap/agent/ClipHook";
 	private static final String URL_ARRAY = "[Ljava/net/URL;";
 	private static final String SETUP_CLASSPATH_DESC = "()" + URL_ARRAY;
 
@@ -105,7 +107,7 @@ public final class MsptTransformer implements ClassFileTransformer {
 				case TRACKED_ENTITY -> rewriteTrackedEntity(loader, classfileBuffer);
 				case NATURAL_SPAWNER -> rewriteNaturalSpawner(loader, classfileBuffer);
 				case MINECRAFT_SERVER -> rewriteMinecraftServer(loader, classfileBuffer);
-				case PAPERCLIP -> appendPaperclipClasspath(classfileBuffer);
+				case PAPERCLIP, LEAVESCLIP, LEAPER -> appendClipClasspath(classfileBuffer);
 				default -> null;
 			};
 		} catch (Throwable error) {
@@ -116,12 +118,12 @@ public final class MsptTransformer implements ClassFileTransformer {
 	}
 
 	/**
-	 * 在 {@code Paperclip.setupClasspath} 的每个返回点前补一次 {@link PaperclipHook#appendSelf}，
-	 * 让服务端类加载器把注入器运行时类路径也纳入搜索路径。
+	 * 在 Paperclip、Leavesclip 或 Leaper 的 {@code setupClasspath} 每个返回点前补一次
+	 * {@link ClipHook#appendSelf}，让服务端类加载器把注入器运行时类路径也纳入搜索路径。
 	 *
 	 * <p>只插入一次静态调用，栈上原为 {@code URL[]}，调用后仍是 {@code URL[]}，现有栈帧无需重算。
 	 */
-	private static byte[] appendPaperclipClasspath(byte[] bytes) {
+	private static byte[] appendClipClasspath(byte[] bytes) {
 		ClassReader reader = new ClassReader(bytes);
 		ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
 		ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9, writer) {
@@ -136,7 +138,7 @@ public final class MsptTransformer implements ClassFileTransformer {
 					@Override
 					public void visitInsn(int opcode) {
 						if (opcode == Opcodes.ARETURN) {
-							super.visitMethodInsn(Opcodes.INVOKESTATIC, PAPERCLIP_HOOK, "appendSelf",
+							super.visitMethodInsn(Opcodes.INVOKESTATIC, CLIP_HOOK, "appendSelf",
 									"(" + URL_ARRAY + ")" + URL_ARRAY, false);
 						}
 						super.visitInsn(opcode);
