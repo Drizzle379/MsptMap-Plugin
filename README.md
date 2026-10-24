@@ -19,9 +19,9 @@ jar 同时承担两种角色：放入 `plugins/` 是 Bukkit 插件，以 `-javaa
 
 | jar | 服务端 |
 |---|---|
-| `MsptMap-Plugin-1.0.2-alpha+1.21.10.jar` | Paper 1.21.6 – 1.21.10 |
-| `MsptMap-Plugin-1.0.2-alpha+1.21.11.jar` | Paper 1.21.11 |
-| `MsptMap-Plugin-1.0.2-alpha+26.x.jar` | Paper 26.1.2 / 26.2 / 26.3 |
+| `MsptMap-Plugin-1.0.3-alpha+1.21.10.jar` | Paper 1.21.6 – 1.21.10 |
+| `MsptMap-Plugin-1.0.3-alpha+1.21.11.jar` | Paper 1.21.11 |
+| `MsptMap-Plugin-1.0.3-alpha+26.x.jar` | Paper 26.1.2 / 26.2 / 26.3 |
 
 1.21.6 – 1.21.10 的 NMS 签名一致，故由同一个包覆盖。
 
@@ -31,7 +31,7 @@ jar 同时承担两种角色：放入 `plugins/` 是 Bukkit 插件，以 `-javaa
 2. ⚠️ **重要**：在启动命令的 `-jar` 之前加入 `-javaagent`：
 
    ```bash
-   java -Xms4G -Xmx4G -javaagent:plugins/MsptMap-Plugin-1.0.2-alpha+26.x.jar -jar paper.jar nogui
+   java -Xms4G -Xmx4G -javaagent:plugins/MsptMap-Plugin-1.0.3-alpha+26.x.jar -jar paper.jar nogui
    ```
 
 3. 启动后日志出现以下两行即为正常：
